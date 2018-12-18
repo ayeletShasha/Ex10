@@ -46,6 +46,8 @@ class GameRunner:
         pass
 
     def move_object(self, object):
+        """This method moves a given object by a formula defined in the API.
+        It does this for both x and y axis"""
         object = self.object_dict[object]
         x_speed = object.x_speed
         y_speed = object.y_speed
@@ -56,11 +58,19 @@ class GameRunner:
                        % self.__delta_x) + self.__screen_min_x
         new_y_coord = ((y_speed + y_coord - self.__screen_min_y)
                        % self.__delta_y) + self.__screen_min_y
-        return tuple(new_x_coord, new_y_coord)
+        return new_x_coord, new_y_coord
 
-    def change_direction(self, object):
-        object = self.object_dict[object]
-        
+    def change_ship_direction(self, ship):
+        """This function changes the ships direction if user presses left or
+        right accordingly"""
+        ship = self.object_dict[ship]
+        ship_dir = ship.get_direction()
+        if Screen.is_left_pressed():
+            ship.set_direction(ship_dir + 7)
+        elif Screen.is_right_pressed():
+            ship.set_direction(ship_dir - 7)
+        return
+
 
 def main(amount):
     runner = GameRunner(amount)
