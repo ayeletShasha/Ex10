@@ -3,6 +3,7 @@ from ship import Ship
 from asteroid import Asteroid
 from torpedo import Torpedo
 from random import randint
+import math
 import sys
 
 DEFAULT_ASTEROIDS_NUM = 5
@@ -43,7 +44,8 @@ class GameRunner:
 
     def _game_loop(self):
         # Your code goes here
-        pass
+        while True:
+            GameRunner.change_ship_direction(self, "ship")
 
     def move_object(self, object):
         """This method moves a given object by a formula defined in the API.
@@ -62,15 +64,28 @@ class GameRunner:
 
     def change_ship_direction(self, ship):
         """This function changes the ships direction if user presses left or
-        right accordingly"""
+        right accordingly
+        :param ship: A STRING"""
+
         ship = self.object_dict[ship]
         ship_dir = ship.get_direction()
-        if Screen.is_left_pressed():
+        if self.__screen.is_left_pressed():
             ship.set_direction(ship_dir + 7)
-        elif Screen.is_right_pressed():
+        elif self.__screen.is_right_pressed():
             ship.set_direction(ship_dir - 7)
         return
 
+    def accelerate_ship(self, ship):
+        if self.__screen.is_up_pressed():
+            ship = self.object_dict[ship]
+            cur_x_speed = ship.x_speed
+            cur_y_speed = ship.y_speed
+            cur_heading = ship.direction
+            new_x_speed = cur_x_speed + math.cos(math.radians(cur_heading))
+            new_y_speed = cur_y_speed + math.sin(math.radians(cur_heading))
+            ship.set_speed("x", new_x_speed)
+            ship.set_speed("y", new_y_speed)
+        return
 
 def main(amount):
     runner = GameRunner(amount)
