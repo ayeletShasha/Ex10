@@ -4,7 +4,7 @@ Y = 'y'
 
 class Asteroid:
     """a class for 'Asteroid' objects.
-     each asteroid has the following parameters:
+     each asteroid has the following attributes:
      x_location - asteroid's location on the x axis
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
