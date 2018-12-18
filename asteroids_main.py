@@ -10,9 +10,10 @@ DEFAULT_ASTEROIDS_NUM = 5
 X = "x"
 Y = "y"
 
+
 class GameRunner:
 
-    def __init__(self, asteroids_amount):
+    def __init__(self, asteroids_amount = DEFAULT_ASTEROIDS_NUM):
         self.__screen = Screen()
 
         self.__screen_max_x = Screen.SCREEN_MAX_X
@@ -30,6 +31,17 @@ class GameRunner:
         self.__object_dict["ship"] = ship
         Screen.draw_ship(self.__screen, x_coor, y_coor, 0)
 
+        # creating asteroids
+        for i in range(asteroids_amount):
+            ast_x_coor = randint(self.__screen_min_x, self.__screen_max_x)
+            ast_y_coor = randint(self.__screen_min_y, self.__screen_max_y)
+            speed_x = randint(1, 4)
+            speed_y = randint(1, 4)
+            ast = Asteroid(ast_x_coor, ast_y_coor, speed_x, speed_y)
+            self.__screen.register_asteroid(ast, 3)
+            self.__screen.draw_asteroid(ast, ast_x_coor, ast_y_coor)
+            self.__object_dict[i] = ast
+            # asteroids are represented as numbers in the object dictionary
 
     def run(self):
         self._do_loop()
@@ -46,8 +58,12 @@ class GameRunner:
     def _game_loop(self):
         # Your code goes here
         GameRunner.change_ship_direction(self, "ship")
-        GameRunner.move_object(self, "ship")
+        for item in self.__object_dict:
+            GameRunner.move_object(self, item)
         GameRunner.accelerate_ship(self, "ship")
+        self.__screen.draw_ship(self.__object_dict["ship"].get_location(X),
+                                self.__object_dict["ship"].get_location(Y),
+                                self.__object_dict["ship"].get_direction())
 
     def move_object(self, object):
         """This method moves a given object by a formula defined in the API.
