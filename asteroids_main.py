@@ -71,9 +71,10 @@ class GameRunner:
                 self.__screen.draw_asteroid(self.__object_dict[ast],
                 self.__object_dict[ast].get_location(X),
                 self.__object_dict[ast].get_location(Y))
-                if self.__object_dict[ast].has_intersection(self.__object_dict[\
-                        "ship"]):
+                if self.__object_dict[ast].has_intersection(
+                    self.__object_dict["ship"]):
                     self.__screen.show_message(ALARM_TITLE, ALARM_MSG)
+                    self.__screen.remove_life()
 
 
     def move_object(self, object):

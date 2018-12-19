@@ -66,10 +66,12 @@ class Asteroid:
     def has_intersection(self, obj):
         for other_object in self.__object_dict:
             if other_object is not obj and type(other_object) == int:
-                distance = math.sqrt((obj.get_location(X) -
-                    other_object.get_location(X))**2 +
-                    (obj.get_location(Y) - other_object.get_location(Y))**2)
-                if distance <= obj.get__radius() + other_object.get__radius():
+                distance = math.sqrt((self.__object_dict[obj].get_location(X) -
+                    self.__object_dict[other_object].get_location(X))**2 +
+                    (self.__object_dict[obj].get_location(Y) -
+                     self.__object_dict[other_object].get_location(Y))**2)
+                if distance <= self.__object_dict[obj].get__radius() + \
+                        self.__object_dict[other_object].get__radius():
                     return True
         return False
 
