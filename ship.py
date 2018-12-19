@@ -15,6 +15,7 @@ class Ship:
         self.__y_location = y_loc
         self.__y_speed = y_speed
         self.__direction = dir
+        self.__radius = 1
 
     def get_location(self, axis):
         """returns the asteroid's location in the requested axis"""
@@ -51,3 +52,6 @@ class Ship:
     def set_direction(self, direction):
         """sets the asteroid's direction according to input"""
         self.__direction = direction
+
+    def get_radius(self):
+        return self.__radius

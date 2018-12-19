@@ -9,7 +9,8 @@ import sys
 DEFAULT_ASTEROIDS_NUM = 5
 X = "x"
 Y = "y"
-
+ALARM_TITLE = "BE CAREFUL!!"
+ALARM_MSG = "YOU'VE COLLIDED WITH AN ASTEROID AND LOST A LIFE"
 
 class GameRunner:
 
@@ -42,6 +43,7 @@ class GameRunner:
             self.__screen.draw_asteroid(ast, ast_x_coor, ast_y_coor)
             self.__object_dict[i] = ast
             # asteroids are represented as numbers in the object dictionary
+            Asteroid.set_object_dict(Asteroid, self.__object_dict)
 
     def run(self):
         self._do_loop()
@@ -64,6 +66,15 @@ class GameRunner:
         self.__screen.draw_ship(self.__object_dict["ship"].get_location(X),
                                 self.__object_dict["ship"].get_location(Y),
                                 self.__object_dict["ship"].get_direction())
+        for ast in self.__object_dict:
+            if type(ast) == int:  # Only asteroid objects
+                self.__screen.draw_asteroid(self.__object_dict[ast],
+                self.__object_dict[ast].get_location(X),
+                self.__object_dict[ast].get_location(Y))
+                if self.__object_dict[ast].has_intersection(self.__object_dict[\
+                        "ship"]):
+                    self.__screen.show_message(ALARM_TITLE, ALARM_MSG)
+
 
     def move_object(self, object):
         """This method moves a given object by a formula defined in the API.
@@ -105,6 +116,9 @@ class GameRunner:
             ship.set_speed(X, new_x_speed)
             ship.set_speed(Y, new_y_speed)
         return
+
+    def get_object_dict(self):
+        return self.__object_dict
 
 def main(amount):
     runner = GameRunner(amount)

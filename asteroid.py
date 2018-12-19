@@ -1,3 +1,6 @@
+from ship import Ship
+from torpedo import Torpedo
+import math
 X = 'x'
 Y = 'y'
 
@@ -15,6 +18,8 @@ class Asteroid:
         self.__y_location = y_loc
         self.__y_speed = y_speed
         self.__direction = dir
+        self.__object_dict = {}
+        self.__radius = (3*10) - 5
 
     def get_location(self, axis):
         """returns the asteroid's location in the requested axis"""
@@ -51,3 +56,20 @@ class Asteroid:
     def set_direction(self, direction):
         """sets the asteroid's direction according to input"""
         self.__direction = direction
+
+    def set_object_dict(self, dict):
+        self.__object_dict = dict
+
+    def get_radius(self):
+        return self.__radius
+
+    def has_intersection(self, obj):
+        for other_object in self.__object_dict:
+            if other_object is not obj and type(other_object) == int:
+                distance = math.sqrt((obj.get_location(X) -
+                    other_object.get_location(X))**2 +
+                    (obj.get_location(Y) - other_object.get_location(Y))**2)
+                if distance <= obj.get__radius() + other_object.get__radius():
+                    return True
+        return False
+
