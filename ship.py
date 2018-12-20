@@ -9,12 +9,12 @@ class Ship:
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
      y_speed - asteroid's speed on the y axis"""
-    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, dir=0):
+    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, heading=0):
         self.__x_location = x_loc
         self.__x_speed = x_speed
         self.__y_location = y_loc
         self.__y_speed = y_speed
-        self.__direction = dir
+        self.__heading = heading
         self.__radius = 1
 
     def get_location(self, axis):
@@ -31,9 +31,9 @@ class Ship:
         if axis == Y:
             return self.__y_speed
 
-    def get_direction(self):
+    def get_heading(self):
         """returns the asteroid's direction"""
-        return self.__direction
+        return self.__heading
 
     def set_location(self, axis, coordinate):
         """sets the asteroid's location according to input"""
@@ -49,9 +49,9 @@ class Ship:
         else:
             self.__y_speed = speed
 
-    def set_direction(self, direction):
+    def set_heading(self, heading):
         """sets the asteroid's direction according to input"""
-        self.__direction = direction
+        self.__heading = heading
 
     def get_radius(self):
         return self.__radius

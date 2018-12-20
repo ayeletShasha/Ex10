@@ -1,3 +1,4 @@
+import math
 X = 'x'
 Y = 'y'
 
@@ -9,12 +10,14 @@ class Torpedo:
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
      y_speed - asteroid's speed on the y axis"""
-    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, dir=0):
+    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, heading=0):
         self.__x_location = x_loc
-        self.__x_speed = x_speed
+        self.__x_speed = x_speed + (2*math.cos(math.radians(heading)))
         self.__y_location = y_loc
-        self.__y_speed = y_speed
-        self.__direction = dir
+        self.__y_speed = y_speed + (2*math.sin(math.radians(heading)))
+        self.__heading = heading
+        self.__radius = 4
+        self.__lifetime = 0
 
     def get_location(self, axis):
         """returns the asteroid's location in the requested axis"""
@@ -30,9 +33,9 @@ class Torpedo:
         if axis == Y:
             return self.__y_speed
 
-    def get_direction(self):
-        """returns the asteroid's direction"""
-        return self.__direction
+    def get_heading(self):
+        """returns the asteroid's heading"""
+        return self.__heading
 
     def set_location(self, axis, coordinate):
         """sets the asteroid's location according to input"""
@@ -48,6 +51,15 @@ class Torpedo:
         else:
             self.__y_speed = speed
 
-    def set_direction(self, direction):
-        """sets the asteroid's direction according to input"""
-        self.__direction = direction
+    def set_heading(self, heading):
+        """sets the asteroid's heading according to input"""
+        self.__heading = heading
+
+    def get_radius(self):
+        return self.__radius
+
+    def set_lifetime(self):
+        self.__lifetime += 1
+        if self.__lifetime == 200:
+            return True
+        return False
