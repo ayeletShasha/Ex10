@@ -79,6 +79,7 @@ class GameRunner:
             break
 
         self.check_torpedo_lifetime()
+        self.teleport_ship()
 
         if self.__screen.is_space_pressed():
             # check if user launched torpedo
@@ -86,7 +87,9 @@ class GameRunner:
                 # then 10 torpedoes in-game
                 self.create_torpedo()
                 self.__torpedo_counter += 1
-        self.teleport_ship()
+        while True:
+            if self.teleport_ship():
+                break
         self.__screen.set_score(self.__score)
         self.is_game_over()
 
@@ -163,7 +166,14 @@ class GameRunner:
 
     def teleport_ship(self):
         if self.__screen.is_teleport_pressed():
-            pass
+            x_coor, y_coor = self.rand_x_y()
+            for ast in self.__asteroid_dict:
+                if x_coor == self.__asteroid_dict[ast].get_location(X) and \
+                        y_coor == self.__asteroid_dict[ast].get_location(Y):
+                    return False
+            self.__ship_dict["ship"].set_location(X, x_coor)
+            self.__ship_dict["ship"].set_location(Y, y_coor)
+        return True
 
 
     def rand_x_y(self):
