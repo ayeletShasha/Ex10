@@ -6,7 +6,6 @@ Y = 'y'
 
 
 class Asteroid:
-    __astro_dict = {}
     """a class for 'Asteroid' objects.
      each asteroid has the following parameters:
      x_location - asteroid's location on the x axis
