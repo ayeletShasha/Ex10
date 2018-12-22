@@ -28,8 +28,8 @@ class GameRunner:
         self.__dictionaries = [self.__ship_dict, self.__asteroid_dict,
                                self.__torpedo_dict]
         self.__score = 0  # Initialized score
-        self.__torpedo_counter = 0
-        self.__life_counter = 3
+        self.__torpedo_counter = 0  # Amount of torpedoes in game
+        self.__life_counter = 3  # Amount of lives left
 
         self.__screen_max_x = Screen.SCREEN_MAX_X
         self.__screen_max_y = Screen.SCREEN_MAX_Y
@@ -39,7 +39,7 @@ class GameRunner:
         self.__delta_y = self.__screen_max_y - self.__screen_min_y
 
         self.create_asteroids(asteroids_amount)
-        while True:
+        while True:  # As long as ship coordinates don't collide with asteroids
             if self.create_ship():
                 break
         self.__asteroid_counter = asteroids_amount
@@ -79,14 +79,22 @@ class GameRunner:
             break
 
         self.check_torpedo_lifetime()
+        self.check_rifle_lifetime()
         self.teleport_ship()
 
         if self.__screen.is_space_pressed():
             # check if user launched torpedo
-            if len(self.__torpedo_dict) < 10: # As long as there are less
+            if len(self.__torpedo_dict) < 10:  # As long as there are less
                 # then 10 torpedoes in-game
                 self.create_torpedo()
                 self.__torpedo_counter += 1
+
+        if self.__screen.is_special_pressed():
+            # check if user launched rifle
+            if len(self.__torpedo_dict) < 5:  # 5 shots * 3 for each torpedo
+                self.create_rifle()
+                self.__torpedo_dict += 1
+
         while True:
             if self.teleport_ship():
                 break
@@ -99,6 +107,14 @@ class GameRunner:
                 self.__screen.unregister_torpedo(self.__torpedo_dict[torp])
                 del self.__torpedo_dict[torp]
                 break
+
+    def check_rifle_lifetime(self):
+        for rifle in self.__torpedo_dict:
+            if self.__torpedo_dict[rifle].set_lifetime() == None:
+                self.__screen.unregister_torpedo(self.__torpedo_dict[rifle])
+                del self.__torpedo_dict[rifle]
+                break
+
 
     def torp_collision(self, ast, torp):
         ast_size = self.__asteroid_dict[ast].get_size()
@@ -182,13 +198,14 @@ class GameRunner:
         return x_coor, y_coor
 
     def create_asteroids(self, asteroids_amount):
+        ast_size = 3
         for i in range(asteroids_amount):
             ast_x_coor = randint(self.__screen_min_x, self.__screen_max_x)
             ast_y_coor = randint(self.__screen_min_y, self.__screen_max_y)
             speed_x = randint(1, 4)
             speed_y = randint(1, 4)
-            ast = Asteroid(ast_x_coor, ast_y_coor, speed_x, speed_y)
-            self.__screen.register_asteroid(ast, 3)
+            ast = Asteroid(ast_x_coor, ast_y_coor, speed_x, speed_y, ast_size)
+            self.__screen.register_asteroid(ast, ast_size)
             self.__screen.draw_asteroid(ast, ast_x_coor, ast_y_coor)
             self.__asteroid_dict[i] = ast
             # asteroids are represented as numbers in the object dictionary
@@ -265,6 +282,46 @@ class GameRunner:
                                    torp.get_location(
             Y), torp.get_heading())
         self.__torpedo_dict[self.__torpedo_counter] = torp
+
+    def create_rifle(self):
+        rif1 = Torpedo(self.__ship_dict["ship"].get_location(X),
+                       self.__ship_dict["ship"].get_location(Y),
+                       self.__ship_dict["ship"].get_speed(X),
+                       self.__ship_dict["ship"].get_speed(Y),
+                       self.__ship_dict["ship"].get_heading())
+        rif2 = Torpedo(self.__ship_dict["ship"].get_location(X),
+                       self.__ship_dict["ship"].get_location(Y),
+                       self.__ship_dict["ship"].get_speed(X),
+                       self.__ship_dict["ship"].get_speed(Y),
+                       self.__ship_dict["ship"].get_heading()*math.pi/2)
+        rif3 = Torpedo(self.__ship_dict["ship"].get_location(X),
+                       self.__ship_dict["ship"].get_location(Y),
+                       self.__ship_dict["ship"].get_speed(X),
+                       self.__ship_dict["ship"].get_speed(Y),
+                       self.__ship_dict["ship"].get_heading()*math.pi*3/2)
+
+        self.__screen.register_torpedo(rif1)
+        self.__screen.register_torpedo(rif2)
+        self.__screen.register_torpedo(rif3)
+
+        self.__screen.draw_torpedo(rif1, rif1.get_location(X),
+                                   rif1.get_location(
+            Y), rif1.get_heading())
+        self.__screen.draw_torpedo(rif2, rif2.get_location(X),
+                                   rif2.get_location(
+            Y), rif2.get_heading())
+        self.__screen.draw_torpedo(rif3, rif3.get_location(X),
+                                   rif3.get_location(
+            Y), rif3.get_heading())
+
+        self.__torpedo_dict[self.__torpedo_counter] = rif1
+        self.__torpedo_counter += 1
+        self.__torpedo_dict[self.__torpedo_counter] = rif2
+        self.__torpedo_counter += 1
+        self.__torpedo_dict[self.__torpedo_counter] = rif3
+
+
+
 
     def is_game_over(self):
         if self.__life_counter == 0:

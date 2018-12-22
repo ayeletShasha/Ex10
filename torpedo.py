@@ -10,13 +10,14 @@ class Torpedo:
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
      y_speed - asteroid's speed on the y axis"""
-    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, heading=0):
+    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, heading=0,
+                 radius=4):
         self.__x_location = x_loc
         self.__x_speed = x_speed + (2*math.cos(math.radians(heading)))
         self.__y_location = y_loc
         self.__y_speed = y_speed + (2*math.sin(math.radians(heading)))
         self.__heading = heading
-        self.__radius = 4
+        self.__radius = radius
         self.__lifetime = 0
 
     def get_location(self, axis):
@@ -62,4 +63,6 @@ class Torpedo:
         self.__lifetime += 1
         if self.__lifetime == 200:
             return True
+        elif self.__lifetime == 150:
+            return None
         return False

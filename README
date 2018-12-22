@@ -1,0 +1,44 @@
+Authors information in AUTHORS file.
+
+We discussed the exercise with no other student.
+
+=============================
+=  README for ex10
+=============================
+
+
+==================
+=  Description:  =
+==================
+In this exercise we built an "Asteroids" game using OOP techniques.
+This exercise was different from ex9 because in this exercise we had
+very little directions to follow and we had to make API regarding 
+decisions ourself, while in ex9 we had to follow a strict API.
+
+==================
+=  Web Sources:  =
+==================
+
+
+======================
+=  Game Design  =
+======================
+While building the game we had to make many game-design decisions.
+Here, we refer to 3 of these decisions, offer an alternative, and discuss
+the Pros and Cons of each one.
+
+1) Creating GameRunner as dynamic as possible and the other classes static:
+A major game design decision we made was to write most of the game code in 
+GameRunner and to leave Torpedo, Ship and Asteroid classes as basic as possible.
+This is because we wanted GameRunner to hold most game rules and restrictions,
+whilst the other object classes only hold basic characterstics of their objects.
+This allowed us to add "Special Attack" easily while using Torpedo, Asteroid and
+Ship, with basicly little to none alterations.
+
+A different design could have been shifting some of the methods in GameRunner to 
+the different classes (a move_object method for each class, saving the objects
+in a dictionary in each class, etc.). This would have allowed an organized
+and understandableuse of the code, but would result in multiplying code in 
+the different classes and would cause worse code efficiency.
+
+2) 

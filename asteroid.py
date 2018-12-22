@@ -13,7 +13,7 @@ class Asteroid:
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
      y_speed - asteroid's speed on the y axis"""
-    def __init__(self, x_loc=0, y_loc=0, x_speed=0,  y_speed=0, size=3):
+    def __init__(self, x_loc, y_loc, x_speed,  y_speed, size):
         self.__x_location = x_loc
         self.__x_speed = x_speed
         self.__y_location = y_loc
