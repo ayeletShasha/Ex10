@@ -72,21 +72,9 @@ class GameRunner:
         GameRunner.accelerate_ship(self, "ship")  # accelerates the ship
 
         # checks collisions between all asteroids and other objects
-        for ast in self.__asteroid_dict:
-            if self.__asteroid_dict[ast].has_intersection(self.__ship_dict[
-                                                             "ship"]):
-                self.ship_collision(ast)
-                break
-        for ast in self.__asteroid_dict:
-            for torp in self.__torpedo_dict:
-                if self.__asteroid_dict[ast].has_intersection\
-                            (self.__torpedo_dict[torp]):
-                    self.torp_collision(ast, torp)
-                    break
-            break
+        self.check_collisions()
 
         self.check_torpedo_lifetime()
-        # self.check_rifle_lifetime()
 
         if self.__screen.is_space_pressed():
             # check if user launched torpedo
@@ -101,6 +89,23 @@ class GameRunner:
                 break
         self.__screen.set_score(self.__score)
         self.is_game_over()
+
+    def check_collisions(self):
+        """a method that checks if there are collisions between all asteroids
+         and other objects (ship and torpedoes). if there are any, it passes
+         the objects to the relevant method"""
+        for ast in self.__asteroid_dict:
+            if self.__asteroid_dict[ast].has_intersection(self.__ship_dict[
+                                                              "ship"]):
+                self.ship_collision(ast)
+                break
+        for ast in self.__asteroid_dict:
+            for torp in self.__torpedo_dict:
+                if self.__asteroid_dict[ast].has_intersection(
+                        self.__torpedo_dict[torp]):
+                    self.torp_collision(ast, torp)
+                    break
+            break
 
     def launch_if_possible(self, torp_type):
         """this method counts how many torpedoes are currently active.

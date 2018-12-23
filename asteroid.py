@@ -63,19 +63,11 @@ class Asteroid:
         return self.__radius
 
     def has_intersection(self, obj):
-        distance = math.sqrt((obj.get_location(X) -
-                              self.get_location(X)) ** 2 +(obj.get_location(Y)-
-                              self.get_location(Y)) ** 2)
+        distance = math.sqrt(math.pow(obj.get_location(X) -
+                                      self.get_location(X), 2) +
+                             math.pow((obj.get_location(Y) -
+                                       self.get_location(Y)), 2))
         if distance <= obj.get_radius() + self.get_radius():
             return True
         return False
-        # for ast in Asteroid.__astro_dict:
-        #     distance = math.sqrt((obj.get_location(X) -
-        #         Asteroid.__astro_dict[ast].get_location(X))**2 +
-        #         (obj.get_location(Y) -
-        #          Asteroid.__astro_dict[ast].get_location(Y))**2)
-        #     if distance <= obj.get_radius() + \
-        #             Asteroid.__astro_dict[ast].get_radius():
-        #         return True
-        # return False
 
