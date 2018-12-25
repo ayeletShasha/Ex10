@@ -11,7 +11,8 @@ class Asteroid:
      x_location - asteroid's location on the x axis
      y_location - asteroid's location on the y axis
      x_speed - asteroid's speed on the x axis
-     y_speed - asteroid's speed on the y axis"""
+     y_speed - asteroid's speed on the y axis
+     size - asteroid's size"""
     def __init__(self, x_loc, y_loc, x_speed,  y_speed, size):
         self.__x_location = x_loc
         self.__x_speed = x_speed
@@ -52,17 +53,13 @@ class Asteroid:
         else:
             self.__y_speed = speed
 
-    def set_direction(self, direction):
-        """sets the asteroid's direction according to input"""
-        self.__direction = direction
-
-    def add_to_astro_dict(self, key, obj):
-        Asteroid.__astro_dict[key] = obj
-
     def get_radius(self):
+        """returns the asteroid's radius"""
         return self.__radius
 
     def has_intersection(self, obj):
+        """this method checks if the asteroid has collided with the
+         requested object"""
         distance = math.sqrt(math.pow(obj.get_location(X) -
                                       self.get_location(X), 2) +
                              math.pow((obj.get_location(Y) -

@@ -20,7 +20,11 @@ MAX_TORPEDOES = 10
 
 
 class GameRunner:
-    def __init__(self, asteroids_amount = DEFAULT_ASTEROIDS_NUM):
+    """This is the main class for running an 'Asteroids' game.
+    It consists of the methods regulating the game rules and the main
+    game_loop method that runs in intervals and checks events happening
+    in-game and calls other methods to respond accordingly"""
+    def __init__(self, asteroids_amount=DEFAULT_ASTEROIDS_NUM):
         self.__screen = Screen()
         # define dictionaries for each object type in the game, and a list
         # of all of them
@@ -61,6 +65,11 @@ class GameRunner:
         self.__screen.ontimer(self._do_loop, 5)
 
     def _game_loop(self):
+
+        self.__torpedoes_to_remove = []
+        self.__asteroids_to_remove = []
+        self.__asteroids_to_add = []
+
         # iterate over all items (ship, asteroids and torpedoes)
         for dict in self.__dictionaries:
             for obj in dict:
@@ -88,6 +97,9 @@ class GameRunner:
             if self.teleport_ship():
                 break
         self.__screen.set_score(self.__score)
+
+        self.update_dicts()  # update all object dictionaries
+
         self.is_game_over()
 
     def check_collisions(self):
@@ -98,14 +110,22 @@ class GameRunner:
             if self.__asteroid_dict[ast].has_intersection(self.__ship_dict[
                                                               "ship"]):
                 self.ship_collision(ast)
-                break
         for ast in self.__asteroid_dict:
             for torp in self.__torpedo_dict:
                 if self.__asteroid_dict[ast].has_intersection(
                         self.__torpedo_dict[torp]):
                     self.torp_collision(ast, torp)
-                    break
-            break
+
+    def update_dicts(self):
+        """this method updates all of the object dictionaries according to
+        lists that were updated during the game loop"""
+        for ast in self.__asteroids_to_remove:
+            del self.__asteroid_dict[ast]
+        for torp in self.__torpedoes_to_remove:
+            del self.__torpedo_dict[torp]
+        for ast in self.__asteroids_to_add:
+            self.__asteroid_dict[self.__asteroid_counter + 1] = ast
+            self.__asteroid_counter += 1
 
     def launch_if_possible(self, torp_type):
         """this method counts how many torpedoes are currently active.
@@ -121,7 +141,6 @@ class GameRunner:
             if amount < MAX_SPECIAL:  # As long as there
                 # are less then 15 special torpedoes in-game
                 self.create_rifle()
-                self.__special_counter -= 1
         elif torp_type == 0:
             # regular torpedoes
             for key in self.__torpedo_dict:
@@ -140,23 +159,16 @@ class GameRunner:
                 # special torpedo
                 if self.__torpedo_dict[torp].set_lifetime() is None:
                     self.__screen.unregister_torpedo(self.__torpedo_dict[torp])
-                    del self.__torpedo_dict[torp]
+                    self.__torpedoes_to_remove.append(torp)
+                    # del self.__torpedo_dict[torp]
                     break
             elif torp >= 0:
                 # regular torpedo
                 if self.__torpedo_dict[torp].set_lifetime():
                     self.__screen.unregister_torpedo(self.__torpedo_dict[torp])
-                    del self.__torpedo_dict[torp]
+                    self.__torpedoes_to_remove.append(torp)
+                    # del self.__torpedo_dict[torp]
                     break
-
-    # def check_rifle_lifetime(self):
-    #     """this method checks if the special torpedo has reached it's maximum
-    #     lifetime. if it has, it removes it from the screen"""
-    #     for rifle in self.__torpedo_dict:
-    #         if self.__torpedo_dict[rifle].set_lifetime() is None:
-    #             self.__screen.unregister_torpedo(self.__torpedo_dict[rifle])
-    #             del self.__torpedo_dict[rifle]
-    #             break
 
     def torp_collision(self, ast, torp):
         """this method handles a collision between a torpedo and an asteroid"""
@@ -171,8 +183,9 @@ class GameRunner:
             self.__score += 100
             self.__screen.unregister_asteroid(self.__asteroid_dict[ast])
             self.__screen.unregister_torpedo(self.__torpedo_dict[torp])
-            del self.__asteroid_dict[ast]
-            del self.__torpedo_dict[torp]
+
+            self.__asteroids_to_remove.append(ast)
+            self.__torpedoes_to_remove.append(torp)
 
     def split_ast(self, ast, torp):
         """this method is called when there's a collision between a big
@@ -191,13 +204,12 @@ class GameRunner:
 
         self.__screen.unregister_asteroid(astro)
         self.__screen.unregister_torpedo(torpy)
-        del self.__asteroid_dict[ast]
-        del self.__torpedo_dict[torp]
+        # add to lists - handle later
+        self.__asteroids_to_remove.append(ast)
+        self.__torpedoes_to_remove.append(torp)
+        self.__asteroids_to_add.append(ast_1)
+        self.__asteroids_to_add.append(ast_2)
 
-        self.__asteroid_dict[self.__asteroid_counter + 1] = ast_1
-        self.__asteroid_counter += 1
-        self.__asteroid_dict[self.__asteroid_counter + 1] = ast_2
-        self.__asteroid_counter += 1
         self.__screen.register_asteroid(ast_1, new_size)
         self.__screen.register_asteroid(ast_2, new_size)
         self.__screen.draw_asteroid(ast_1, ast_1.get_location(X),
@@ -213,7 +225,8 @@ class GameRunner:
         self.__screen.show_message(ALARM_TITLE, ALARM_MSG)
         self.__screen.remove_life()
         self.__life_counter -= 1
-        del self.__asteroid_dict[ast]
+
+        self.__asteroids_to_remove.append(ast)
 
     def create_ship(self):
         """this method creates a new ship in the game. it makes sure it's not
@@ -221,8 +234,8 @@ class GameRunner:
         success"""
         x_coor, y_coor = self.rand_x_y()
         for ast in self.__asteroid_dict:
-            if x_coor == self.__asteroid_dict[ast].get_location(X) and \
-                y_coor == self.__asteroid_dict[ast].get_location(Y):
+            if x_coor == self.__asteroid_dict[ast].get_location(X) and\
+                    y_coor == self.__asteroid_dict[ast].get_location(Y):
                 return False
         ship = Ship(x_coor, y_coor)
         self.__ship_dict["ship"] = ship
@@ -335,19 +348,15 @@ class GameRunner:
 
     def create_rifle(self):
         """this method creates a special shot, fired in 3 directions"""
-        rif1 = Torpedo(self.__ship_dict["ship"].get_location(X),
-                       self.__ship_dict["ship"].get_location(Y),
-                       self.__ship_dict["ship"].get_speed(X),
+        x, y = self.__ship_dict["ship"].get_location(X), \
+               self.__ship_dict["ship"].get_location(Y)
+        rif1 = Torpedo(x, y, self.__ship_dict["ship"].get_speed(X),
                        self.__ship_dict["ship"].get_speed(Y),
                        self.__ship_dict["ship"].get_heading())
-        rif2 = Torpedo(self.__ship_dict["ship"].get_location(X),
-                       self.__ship_dict["ship"].get_location(Y),
-                       self.__ship_dict["ship"].get_speed(X),
+        rif2 = Torpedo(x, y, self.__ship_dict["ship"].get_speed(X),
                        self.__ship_dict["ship"].get_speed(Y),
                        self.__ship_dict["ship"].get_heading()*math.pi/2)
-        rif3 = Torpedo(self.__ship_dict["ship"].get_location(X),
-                       self.__ship_dict["ship"].get_location(Y),
-                       self.__ship_dict["ship"].get_speed(X),
+        rif3 = Torpedo(x, y, self.__ship_dict["ship"].get_speed(X),
                        self.__ship_dict["ship"].get_speed(Y),
                        self.__ship_dict["ship"].get_heading()*math.pi*3/2)
 
@@ -366,10 +375,11 @@ class GameRunner:
             Y), rif3.get_heading())
 
         self.__torpedo_dict[self.__special_counter] = rif1
-        self.__torpedo_counter -= 1
+        self.__special_counter -= 1
         self.__torpedo_dict[self.__special_counter] = rif2
-        self.__torpedo_counter -= 1
+        self.__special_counter -= 1
         self.__torpedo_dict[self.__special_counter] = rif3
+        self.__special_counter -= 1
 
     def is_game_over(self):
         """this method checks if any of the conditions that end a game exist.

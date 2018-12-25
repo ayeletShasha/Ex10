@@ -13,7 +13,7 @@ We discussed the exercise with no other student.
 In this exercise we built an "Asteroids" game using OOP techniques.
 This exercise was different from ex9 because in this exercise we had
 very little directions to follow and we had to make API regarding 
-decisions ourself, while in ex9 we had to follow a strict API.
+decisions ourselves, while in ex9 we had to follow a strict API.
 
 ==================
 =  Web Sources:  =
@@ -31,14 +31,39 @@ the Pros and Cons of each one.
 A major game design decision we made was to write most of the game code in 
 GameRunner and to leave Torpedo, Ship and Asteroid classes as basic as possible.
 This is because we wanted GameRunner to hold most game rules and restrictions,
-whilst the other object classes only hold basic characterstics of their objects.
+whilst the other object classes only hold basic characteristics of their objects.
 This allowed us to add "Special Attack" easily while using Torpedo, Asteroid and
-Ship, with basicly little to none alterations.
+Ship, with basically little to no alterations.
 
 A different design could have been shifting some of the methods in GameRunner to 
 the different classes (a move_object method for each class, saving the objects
 in a dictionary in each class, etc.). This would have allowed an organized
-and understandableuse of the code, but would result in multiplying code in 
+and understandable use of the code, but would result in multiplying code in
 the different classes and would cause worse code efficiency.
 
-2) 
+2) Different types of torpedoes:
+We chose to add the special shots to class Torpedo to apply the classes
+modularity. This allowed little code writing and meant that we could create
+special attacks to be adjusted according to the torpedo's attributes. This also
+ meant we could minimize run-time when adding another shot, as we added it to
+ the torpedo dictionary and therefore prevented multiple iterations over same
+ dictionaries.
+
+ A different approach would have been to create a different class for special
+ shots and add them to different lists and dictionaries, and to use methods
+ specifically built for it. That would have allowed special shots to be more
+ modular but would affect the readability and efficiency of the code.
+
+ 3) Indexing:
+ We added each new object in the game to a dictionary according to it's class.
+ We decided indexing the objects in dictionaries because it made it easier
+ handling and calling the different objects by their dictionary key.
+ We also added special shots and the regular torpedoes to the same dictionary
+ so that we could handle them in the same way and with the same methods, so to
+ make our code simpler and more efficient.
+
+ We could have handled our objects with lists - but that would have made it
+ impossible to know the difference between a regular torpedo and a special shot
+ in the same list. We could have also divided special shots and torpedoes to
+ different lists. That would have meant modular handling for special torpedoes
+ and regular torpedoes, but more code and worse run time.
